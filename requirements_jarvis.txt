@@ -1,0 +1,18 @@
+# JARVIS Enhanced Requirements
+# Core dependencies
+open-interpreter>=0.2.0
+SpeechRecognition>=3.10.0
+pyttsx3>=2.90
+pyautogui>=0.9.54
+rich>=13.4.2
+
+# Dashboard dependencies
+flask>=2.0.0
+flask-cors>=3.0.0
+
+# Optional but recommended
+pyaudio>=0.2.13
+python-dotenv>=1.0.0
+
+# For better voice recognition (optional)
+# whisper  # Uncomment for offline speech recognition

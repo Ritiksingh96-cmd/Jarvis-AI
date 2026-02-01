@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS MK.X // REFINED</title>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-python.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #00f3ff;
+            /* Cyan */
+            --secondary: #0066ff;
+            /* Deep Blue */
+            --alert: #ff0f4f;
+            /* Red */
+            --bg: #020408;
+            --glass: rgba(0, 20, 40, 0.6);
+            --glow: 0 0 20px var(--primary);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--primary);
+            font-family: 'Rajdhani', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            user-select: none;
+        }
+
+        /* --- BACKGROUND FX --- */
+        .bg-grid {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+            background-size: 60px 60px;
+            transform: perspective(500px) rotateX(60deg);
+            animation: gridMove 20s linear infinite;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 40%, #000 120%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes gridMove {
+            0% {
+                transform: perspective(500px) rotateX(60deg) translateY(0);
+            }
+
+            100% {
+                transform: perspective(500px) rotateX(60deg) translateY(60px);
+            }
+        }
+
+        /* --- ARC REACTOR (The Heart) --- */
+        .reactor-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reactor-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 15px var(--primary), inset 0 0 15px var(--primary);
+        }
+
+        .r-outer {
+            width: 100%;
+            height: 100%;
+            border: 5px solid rgba(0, 243, 255, 0.1);
+            border-top: 5px solid var(--primary);
+            border-bottom: 5px solid var(--primary);
+            animation: spin 10s linear infinite;
+        }
+
+        .r-mid {
+            width: 70%;
+            height: 70%;
+            border: 1px dashed var(--primary);
+            animation: spin 5s linear infinite reverse;
+        }
+
+        .r-core {
+            width: 40%;
+            height: 40%;
+            background: radial-gradient(circle, #fff, var(--primary));
+            border-radius: 50%;
+            box-shadow: 0 0 50px var(--primary), 0 0 80px var(--secondary);
+            transition: all 0.1s ease;
+            /* For Audio Reactivity */
+            z-index: 5;
+        }
+
+        .r-lens {
+            position: absolute;
+            width: 120%;
+            height: 120%;
+            background: conic-gradient(from 0deg, transparent 0%, var(--primary) 10%, transparent 20%);
+            border-radius: 50%;
+            animation: scan 4s linear infinite;
+            opacity: 0.1;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes scan {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* States */
+        .reactor.listening .r-core {
+            box-shadow: 0 0 80px #fff, 0 0 120px var(--primary);
+            background: radial-gradient(circle, #fff, #aaffff);
+        }
+
+        .reactor.processing .r-core {
+            box-shadow: 0 0 80px var(--alert);
+            background: radial-gradient(circle, #fff, var(--alert));
+        }
+
+        .reactor.processing .r-outer {
+            border-color: var(--alert);
+            animation-duration: 0.5s;
+        }
+
+        /* --- HUD ELEMENTS --- */
+        .hud-top-left {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            text-align: left;
+        }
+
+        .hud-top-right {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            text-align: right;
+        }
+
+        .label {
+            font-family: 'Orbitron';
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .value {
+            font-family: 'Rajdhani';
+            font-size: 24px;
+            font-weight: 700;
+            text-shadow: var(--glow);
+            line-height: 1.2;
+        }
+
+        .transcript-area {
+            margin-top: 80px;
+            width: 80%;
+            max-width: 800px;
+            text-align: center;
+            min-height: 100px;
+        }
+
+        .live-text {
+            font-size: 32px;
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            font-weight: 300;
+        }
+
+        .buffer-text {
+            color: var(--primary);
+            opacity: 0.7;
+            font-family: 'Consolas', monospace;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        /* --- SIDE PANEL (Hidden Tech) --- */
+        .tech-panel {
+            position: fixed;
+            top: 100px;
+            bottom: 100px;
+            right: 40px;
+            width: 400px;
+            background: var(--glass);
+            border: 1px solid var(--primary);
+            border-left: 4px solid var(--primary);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -20px 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .tech-panel.open {
+            transform: translateX(0);
+        }
+
+        .tech-header {
+            font-family: 'Orbitron';
+            color: white;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .tech-content {
+            flex: 1;
+            overflow-y: auto;
+            font-family: 'Consolas', monospace;
+            font-size: 13px;
+            color: #ddd;
+        }
+
+        /* --- INIT OVERLAY --- */
+        #init-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .init-btn {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 20px 60px;
+            font-family: 'Orbitron';
+            font-size: 24px;
+            letter-spacing: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .init-btn:hover {
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: 0 0 30px var(--primary);
+        }
+
+        /* --- PULSE ANIMATION (Audio) --- */
+        /* JS will scale the .r-core element directly */
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-grid"></div>
+    <div class="vignette"></div>
+
+    <!-- HUD -->
+    <div class="hud-top-left">
+        <div class="label">SYSTEM STATUS</div>
+        <div class="value" id="sysStatus">ONLINE</div>
+        <div style="margin-top:10px;"></div>
+        <div class="label">PROTOCOL</div>
+        <div class="value">VOICE_V10</div>
+        <!-- GitHub Button -->
+        <div style="margin-top:15px;">
+            <button onclick="githubBackup()" class="label"
+                style="background:transparent; border:1px solid var(--primary); padding:5px 10px; cursor:pointer; color:var(--primary); font-size: 10px;">
+                <i class="fab fa-github"></i> GITHUB BACKUP
+            </button>
+        </div>
+    </div>
+
+    <div class="hud-top-right">
+        <div class="label">LOCAL TIME</div>
+        <div class="value" id="clock">00:00</div>
+        <div style="margin-top:10px;"></div>
+        <div class="label">CPU LOAD</div>
+        <div class="value">OPTIMAL</div>
+    </div>
+
+    <!-- MAIN CORE -->
+    <div class="reactor-container reactor" id="reactor">
+        <div class="reactor-ring r-outer"></div>
+        <div class="reactor-ring r-mid"></div>
+        <div class="r-core" id="core"></div>
+        <div class="r-lens"></div>
+    </div>
+
+    <!-- TRANSCRIPT -->
+    <div class="transcript-area">
+        <div class="live-text" id="mainText">STANDBY</div>
+        <div class="buffer-text" id="subText">WAITING FOR COMMAND...</div>
+    </div>
+
+    <!-- SIDE PANEL -->
+    <div class="tech-panel" id="sidePanel">
+        <div class="tech-header">
+            <span>EXECUTING TASK</span>
+            <span style="font-size:10px; opacity:0.7">PYTHON 3.13</span>
+        </div>
+        <div class="tech-content" id="panelContent">
+            <!-- Code/Output goes here -->
+        </div>
+    </div>
+
+    <!-- INIT SCREEN -->
+    <div id="init-screen">
+        <button class="init-btn" onclick="initialize()">INITIALIZE SYSTEMS</button>
+        <div style="margin-top:20px; font-family:'Consolas'; color:#666; font-size:12px;">ENSURE MICROPHONE PERMISSION
+            IS ALLOWED</div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+        let audioCtx, analyser, dataArray;
+        let recognition;
+        let commandQueue = "";
+        let isProcessing = false;
+
+        // --- SYSTEM RESET ---
+        function resetSystem() {
+            console.log("System Reset Requested");
+            isProcessing = false;
+            commandQueue = "";
+            window.speechSynthesis.cancel();
+            updateState("LISTENING");
+            try {
+                recognition.stop();
+                setTimeout(() => { if (!isProcessing) recognition.start(); }, 50);
+            } catch (e) {
+                try { recognition.start(); } catch (err) { }
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && !isProcessing) {
+                e.preventDefault();
+                handleCommand("jarvis");
+            }
+            if (e.code === 'Escape') {
+                resetSystem();
+            }
+        });
+
+        // --- INIT ---
+        function initialize() {
+            document.getElementById('init-screen').style.display = 'none';
+            initAudio();
+            initVoice();
+        }
+
+        // --- VISUALIZER ---
+        function initAudio() {
+            try {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioCtx.createAnalyser();
+                    const source = audioCtx.createMediaStreamSource(stream);
+                    source.connect(analyser);
+                    analyser.fftSize = 32;
+                    dataArray = new Uint8Array(analyser.frequencyBinCount);
+                    renderVisuals();
+                }).catch(e => console.error("Mic error for visualizer:", e));
+            } catch (e) {
+                console.warn("Audio Context setup failed");
+            }
+        }
+
+        function renderVisuals() {
+            requestAnimationFrame(renderVisuals);
+            if (!analyser) return;
+
+            analyser.getByteFrequencyData(dataArray);
+            let avg = dataArray.reduce((src, a) => src + a, 0) / dataArray.length;
+
+            // Map volume to scale (1.0 to 1.5)
+            const scale = 1 + (avg / 255) * 0.8;
+            const core = document.getElementById('core');
+            core.style.transform = `scale(${scale})`; // Beat effect
+        }
+
+        // --- VOICE RECOGNITION ---
+        function initVoice() {
+            if (!('webkitSpeechRecognition' in window)) {
+                alert("Voice features require Google Chrome.");
+                return;
+            }
+
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = false; // FASTER: fires 'onend' on silence
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+            recognition.maxAlternatives = 1;
+
+            recognition.onstart = () => {
+                console.log("Mic Live");
+                // Don't auto-set specific state, just confirm mic is on
+                document.getElementById('subText').innerText = "MIC ACTIVE. SAY 'JARVIS' OR 'LISTEN'";
+            };
+
+            recognition.onerror = (e) => {
+                console.error("Speech Error:", e.error);
+                if (e.error === 'not-allowed') {
+                    document.getElementById('subText').innerText = "MIC PERMISSION BLOCKED!";
+                    document.getElementById('subText').style.color = "red";
+                }
+            };
+
+            recognition.onend = () => {
+                console.log("Mic stopped. Restarting...");
+                // Force restart unless we are explicitly processing
+                if (!isProcessing) {
+                    setTimeout(() => {
+                        try { recognition.start(); } catch (e) { }
+                    }, 100);
+                }
+            };
+
+            recognition.onresult = (event) => {
+                let interim = "";
+                let final = "";
+
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        final += event.results[i][0].transcript.toLowerCase();
+                    } else {
+                        interim += event.results[i][0].transcript;
+                    }
+                }
+
+                if (final) {
+                    console.log("Heard Final:", final);
+                    handleCommand(final);
+
+                    // AUTO-EXECUTE timer - reduced for speed
+                    if (document.getElementById('sysStatus').innerText === "ACTIVE" && !isProcessing) {
+                        clearTimeout(window.autoExecTimer);
+                        window.autoExecTimer = setTimeout(() => {
+                            if (commandQueue.length > 2) {
+                                executeTask(commandQueue.trim());
+                                commandQueue = "";
+                            }
+                        }, 500); // 0.5s silence trigger
+                    }
+                }
+
+                // Visual Feedback
+                let display = interim;
+                if (document.getElementById('sysStatus').innerText === "ACTIVE") {
+                    display = (commandQueue + " " + interim).trim();
+                }
+
+                if (display) {
+                    document.getElementById('mainText').innerText = display.toUpperCase();
+                    document.getElementById('mainText').style.opacity = "1";
+                }
+            };
+
+            try { recognition.start(); } catch (e) { }
+        }
+
+        // --- COMMAND PROCESSING ---
+        function handleCommand(text) {
+            let status = document.getElementById('sysStatus').innerText.trim();
+            let isWake = false;
+
+            // 1. WAKE WORD
+            if (text.includes("jarvis") || text.includes("listen") || text.includes("wake")) {
+                updateState("LISTENING");
+                playSound('wake');
+                isWake = true;
+                status = "ACTIVE"; // We just forced it
+
+                // Remove the wake word from text
+                text = text.replace(/jarvis|listen|wake/gi, "").trim();
+
+                commandQueue = ""; // Start fresh
+                if (!text) return;
+            }
+
+            // 2. EXECUTION OR ACCUMULATION
+            if (status === "ACTIVE") {
+                const triggers = ["execute", "run", "do it", "submit", "apply", "send", "open", "start", "search", "go", "whatsapp"];
+                const hasTrigger = triggers.some(t => text.includes(t));
+
+                if (hasTrigger) {
+                    commandQueue += " " + text;
+                    const finalCmd = commandQueue.trim();
+                    if (finalCmd) {
+                        executeTask(finalCmd);
+                        commandQueue = "";
+                    }
+                    return;
+                }
+
+                // Accumulate if no trigger yet
+                if (text) {
+                    commandQueue += " " + text;
+                }
+            }
+        }
+
+        function playSound(type) {
+            // Optional beep
+            // const aud = new Audio(' beep.mp3 ');
+            // aud.play();
+        }
+
+        // --- EXECUTION ---
+        async function githubBackup() {
+            if (isProcessing) return;
+            executeTask("save this project to my private github repository");
+        }
+
+        async function executeTask(cmd) {
+            isProcessing = true;
+            updateState("PROCESSING");
+            document.getElementById('subText').innerText = "Running Protocol: " + cmd;
+
+            try {
+                // Visual Debug
+                document.getElementById('panelContent').innerHTML += `<div style="color:#aaa; border-bottom:1px solid #333;">> SENDING: ${cmd.substring(0, 20)}...</div>`;
+
+                const res = await fetch(`${API_URL}/execute`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: cmd })
+                });
+
+                if (!res.ok) {
+                    throw new Error(`Server Error: ${res.status} ${res.statusText}`);
+                }
+
+                const data = await res.json();
+
+                // Detailed Debug Log
+                console.log("Server Data:", data);
+
+                if (data.status === 'error') {
+                    throw new Error(data.error || "Unknown Server Error");
+                }
+
+                handleResponse(data);
+                speak(data.response || "Task complete.");
+
+            } catch (e) {
+                console.error(e);
+                updateState("ERROR");
+
+                let errTitle = "SYSTEM FAILURE";
+                let errMsg = e.message;
+                let errHint = "Check Server Terminal for details.";
+
+                // Network / Server Down Check
+                if (e.message.includes("Failed to fetch") || e.message.includes("NetworkError")) {
+                    errTitle = "CORE OFFLINE";
+                    errMsg = "Cannot connect to JARVIS System Core.";
+                    errHint = "Is the console window open? Run LAUNCH_JARVIS.bat again.";
+                    speak("Connection lost. Core is offline.");
+                } else {
+                    speak("System error occurred.");
+                }
+
+                // Show Error on UI
+                document.getElementById('subText').innerText = "FATAL ERROR: " + errTitle;
+                document.getElementById('subText').style.color = "var(--alert)";
+
+                document.getElementById('panelContent').innerHTML = `
+                    <div style="color:var(--alert); font-weight:bold; font-size:16px;">${errTitle}</div>
+                    <div style="color:#fff; margin-top:10px;">${errMsg}</div>
+                    <div style="color:#aaa; font-size:12px; margin-top:15px; border-top:1px solid #333; padding-top:5px;">
+                        DIAGNOSTIC HINT:<br>${errHint}
+                    </div>
+                `;
+                document.getElementById('sidePanel').classList.add('open');
+            }
+
+        }
+
+        function handleResponse(data) {
+            const panel = document.getElementById('sidePanel');
+            const content = document.getElementById('panelContent');
+
+            let html = `
+                <div style="color:white; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;">
+                    <i class="fas fa-comment"></i> "${data.response}"
+                </div>
+            `;
+
+            if (data.code) {
+                html += `<div style="color:#aaa; font-size:10px; margin-bottom:5px;">EXECUTED CODE:</div>`;
+                html += `<pre><code class="language-python">${escapeHtml(data.code)}</code></pre>`;
+            }
+
+            if (data.output) {
+                html += `<div style="color:#aaa; font-size:10px; margin-top:10px; margin-bottom:5px;">SYSTEM OUTPUT:</div>`;
+                html += `<div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:4px;">${escapeHtml(data.output)}</div>`;
+            }
+
+            content.innerHTML = html;
+            panel.classList.add('open');
+            Prism.highlightAll();
+
+            // Auto-hide panel after 15s
+            setTimeout(() => panel.classList.remove('open'), 15000);
+        }
+
+        // --- UI UTILS ---
+        function updateState(state) {
+            const reactor = document.getElementById('reactor');
+            const status = document.getElementById('sysStatus');
+            const root = document.documentElement;
+
+            reactor.classList.remove('listening', 'processing');
+
+            if (state === 'LISTENING') {
+                reactor.classList.add('listening');
+                status.innerText = "ACTIVE";
+                status.style.color = "white";
+                root.style.setProperty('--primary', '#00f3ff');
+                document.getElementById('subText').innerText = "AWAITING INPUT...";
+            }
+            else if (state === 'PROCESSING') {
+                reactor.classList.add('processing');
+                status.innerText = "BUSY";
+                status.style.color = "#ff0f4f";
+                root.style.setProperty('--primary', '#ff0f4f');
+                document.getElementById('mainText').innerText = "PROCESSING";
+            }
+            else if (state === 'STANDBY') {
+                status.innerText = "STANDBY";
+                root.style.setProperty('--primary', '#00f3ff');
+            }
+        }
+
+        function speak(text) {
+            // Ensure text is a string
+            if (!text || typeof text !== 'string') return;
+
+            // Cancel current speech to prevent queue buildup
+            window.speechSynthesis.cancel();
+
+            const u = new SpeechSynthesisUtterance(text);
+            const v = window.speechSynthesis.getVoices();
+
+            // Try to find a good voice
+            u.voice = v.find(val => val.name.includes("Microsoft David")) || // Windows Male
+                v.find(val => val.name.includes("Google US English")) || // Chrome
+                v[0];
+
+            u.rate = 1.25; // Faster for elite responsiveness
+            u.pitch = 1.0;
+
+            u.onend = () => {
+                console.log("Speech finished");
+                resetSystem();
+            };
+
+            window.speechSynthesis.speak(u);
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+    </script>
+</body>
+
+</html>
