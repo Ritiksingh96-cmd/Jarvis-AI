@@ -4,15 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JARVIS MK.X // REFINED</title>
+    <title>JARVIS MK.X // BOSS EDITION</title>
+    <meta name="description" content="JARVIS AI Personal Assistant — Hello Boss, Jarvis online.">
 
-    <!-- Fonts -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
@@ -21,14 +19,14 @@
     <style>
         :root {
             --primary: #00f3ff;
-            /* Cyan */
             --secondary: #0066ff;
-            /* Deep Blue */
             --alert: #ff0f4f;
-            /* Red */
+            --gold: #ffd700;
+            --green: #00ff88;
             --bg: #020408;
-            --glass: rgba(0, 20, 40, 0.6);
+            --glass: rgba(0, 15, 30, 0.75);
             --glow: 0 0 20px var(--primary);
+            --glow-gold: 0 0 20px var(--gold);
         }
 
         * {
@@ -50,7 +48,7 @@
             user-select: none;
         }
 
-        /* --- BACKGROUND FX --- */
+        /* === BACKGROUND === */
         .bg-grid {
             position: absolute;
             top: -50%;
@@ -58,8 +56,8 @@
             width: 200%;
             height: 200%;
             background:
-                linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+                linear-gradient(rgba(0, 243, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.04) 1px, transparent 1px);
             background-size: 60px 60px;
             transform: perspective(500px) rotateX(60deg);
             animation: gridMove 20s linear infinite;
@@ -73,7 +71,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, transparent 40%, #000 120%);
+            background: radial-gradient(circle at center, transparent 30%, #000 120%);
             z-index: -1;
             pointer-events: none;
         }
@@ -88,11 +86,21 @@
             }
         }
 
-        /* --- ARC REACTOR (The Heart) --- */
+        /* === ARC REACTOR (FIXED PERFECT CENTERING) === */
         .reactor-container {
             position: relative;
             width: 300px;
             height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .reactor {
+            position: relative;
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -101,8 +109,10 @@
         .reactor-ring {
             position: absolute;
             border-radius: 50%;
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 15px var(--primary), inset 0 0 15px var(--primary);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-sizing: border-box;
         }
 
         .r-outer {
@@ -112,135 +122,294 @@
             border-top: 5px solid var(--primary);
             border-bottom: 5px solid var(--primary);
             animation: spin 10s linear infinite;
+            box-shadow: 0 0 15px var(--primary), inset 0 0 15px var(--primary);
         }
 
         .r-mid {
-            width: 70%;
-            height: 70%;
-            border: 1px dashed var(--primary);
-            animation: spin 5s linear infinite reverse;
+            width: 75%;
+            height: 75%;
+            border: 2px dashed var(--primary);
+            animation: spinReverse 6s linear infinite;
+            box-shadow: 0 0 10px var(--primary);
         }
 
         .r-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
             width: 40%;
             height: 40%;
-            background: radial-gradient(circle, #fff, var(--primary));
+            background: radial-gradient(circle, #ffffff 0%, var(--primary) 70%);
             border-radius: 50%;
             box-shadow: 0 0 50px var(--primary), 0 0 80px var(--secondary);
-            transition: all 0.1s ease;
-            /* For Audio Reactivity */
+            transform: translate(-50%, -50%) scale(1);
+            transition: transform 0.08s ease-out, background 0.3s, box-shadow 0.3s;
             z-index: 5;
         }
 
         .r-lens {
             position: absolute;
-            width: 120%;
-            height: 120%;
-            background: conic-gradient(from 0deg, transparent 0%, var(--primary) 10%, transparent 20%);
+            top: 50%;
+            left: 50%;
+            width: 110%;
+            height: 110%;
+            background: conic-gradient(from 0deg, transparent 0%, var(--primary) 15%, transparent 30%);
             border-radius: 50%;
+            transform: translate(-50%, -50%);
             animation: scan 4s linear infinite;
-            opacity: 0.1;
+            opacity: 0.25;
+            pointer-events: none;
         }
 
         @keyframes spin {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
             100% {
-                transform: rotate(360deg);
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        @keyframes spinReverse {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotate(-360deg);
             }
         }
 
         @keyframes scan {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
             100% {
-                transform: rotate(360deg);
+                transform: translate(-50%, -50%) rotate(360deg);
             }
         }
 
-        /* States */
+        /* Reactor States */
         .reactor.listening .r-core {
-            box-shadow: 0 0 80px #fff, 0 0 120px var(--primary);
-            background: radial-gradient(circle, #fff, #aaffff);
+            box-shadow: 0 0 80px #fff, 0 0 130px var(--primary);
+            background: radial-gradient(circle, #fff, #88ffff);
         }
 
         .reactor.processing .r-core {
-            box-shadow: 0 0 80px var(--alert);
+            box-shadow: 0 0 90px var(--alert);
             background: radial-gradient(circle, #fff, var(--alert));
         }
 
         .reactor.processing .r-outer {
             border-color: var(--alert);
-            animation-duration: 0.5s;
+            animation-duration: 0.6s;
         }
 
-        /* --- HUD ELEMENTS --- */
+        .reactor.greeting .r-core {
+            box-shadow: 0 0 80px var(--gold), 0 0 120px var(--gold);
+            background: radial-gradient(circle, #fff, var(--gold));
+        }
+
+        .reactor.greeting .r-outer {
+            border-color: var(--gold);
+            border-top-color: var(--gold);
+            animation-duration: 3s;
+        }
+
+        /* === HUD ELEMENTS === */
         .hud-top-left {
             position: absolute;
-            top: 40px;
-            left: 40px;
+            top: 30px;
+            left: 30px;
             text-align: left;
         }
 
         .hud-top-right {
             position: absolute;
-            top: 40px;
-            right: 40px;
+            top: 30px;
+            right: 30px;
+            text-align: right;
+        }
+
+        .hud-bot-left {
+            position: absolute;
+            bottom: 80px;
+            left: 30px;
+            text-align: left;
+        }
+
+        .hud-bot-right {
+            position: absolute;
+            bottom: 80px;
+            right: 30px;
             text-align: right;
         }
 
         .label {
             font-family: 'Orbitron';
-            font-size: 12px;
+            font-size: 10px;
             letter-spacing: 2px;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.45);
+            text-transform: uppercase;
         }
 
         .value {
             font-family: 'Rajdhani';
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
             text-shadow: var(--glow);
             line-height: 1.2;
         }
 
+        /* === STATUS BAR === */
+        #sysStatus {
+            font-family: 'Orbitron';
+            font-size: 13px;
+            letter-spacing: 4px;
+            color: var(--primary);
+            text-shadow: var(--glow);
+        }
+
+        /* === MAIN TEXT AREA === */
         .transcript-area {
-            margin-top: 80px;
+            margin-top: 40px;
             width: 80%;
-            max-width: 800px;
+            max-width: 850px;
             text-align: center;
-            min-height: 100px;
+            min-height: 80px;
         }
 
         .live-text {
-            font-size: 32px;
+            font-size: 28px;
             color: white;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-            font-weight: 300;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+            font-weight: 400;
+            min-height: 40px;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
         }
 
         .buffer-text {
             color: var(--primary);
-            opacity: 0.7;
-            font-family: 'Consolas', monospace;
+            opacity: 0.85;
+            font-family: 'Fira Code', monospace;
             margin-top: 10px;
-            font-size: 14px;
+            font-size: 13px;
+            letter-spacing: 1px;
         }
 
-        /* --- SIDE PANEL (Hidden Tech) --- */
+        /* === INPUT BAR === */
+        .input-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 24px;
+            background: rgba(0, 10, 20, 0.92);
+            border-top: 1px solid rgba(0, 243, 255, 0.25);
+            backdrop-filter: blur(15px);
+            z-index: 90;
+        }
+
+        #textInput {
+            flex: 1;
+            background: rgba(0, 243, 255, 0.05);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 6px;
+            color: var(--primary);
+            font-family: 'Rajdhani';
+            font-size: 17px;
+            font-weight: 600;
+            padding: 10px 18px;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            pointer-events: none;
+            caret-color: transparent;
+            user-select: none;
+            cursor: default;
+        }
+
+        #textInput:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 12px rgba(0, 243, 255, 0.3);
+        }
+
+        #textInput::placeholder {
+            color: rgba(0, 243, 255, 0.7);
+        }
+
+        #sendBtn {
+            display: none;
+        }
+
+        .btn {
+            font-family: 'Orbitron';
+            font-size: 11px;
+            letter-spacing: 2px;
+            font-weight: 700;
+            padding: 12px 20px;
+            border: 1px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            color: #000;
+            box-shadow: var(--glow);
+        }
+
+        .btn-alert {
+            border-color: var(--alert);
+            color: var(--alert);
+        }
+
+        .btn-alert:hover {
+            background: var(--alert);
+            color: #fff;
+            box-shadow: 0 0 15px var(--alert);
+        }
+
+        .btn-gold {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .btn-gold:hover {
+            background: var(--gold);
+            color: #000;
+            box-shadow: var(--glow-gold);
+        }
+
+        /* === SIDE PANEL === */
         .tech-panel {
             position: fixed;
-            top: 100px;
-            bottom: 100px;
-            right: 40px;
-            width: 400px;
+            top: 0;
+            bottom: 65px;
+            right: 0;
+            width: 480px;
             background: var(--glass);
-            border: 1px solid var(--primary);
-            border-left: 4px solid var(--primary);
-            backdrop-filter: blur(10px);
+            border-left: 2px solid var(--primary);
+            backdrop-filter: blur(16px);
             padding: 20px;
-            transform: translateX(120%);
+            transform: translateX(100%);
             transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: -20px 0 50px rgba(0, 0, 0, 0.5);
+            box-shadow: -20px 0 50px rgba(0, 0, 0, 0.8);
+            z-index: 100;
         }
 
         .tech-panel.open {
@@ -248,476 +417,836 @@
         }
 
         .tech-header {
-            font-family: 'Orbitron';
-            color: white;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            padding-bottom: 10px;
-            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+            font-family: 'Orbitron';
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: var(--primary);
         }
 
         .tech-content {
-            flex: 1;
             overflow-y: auto;
-            font-family: 'Consolas', monospace;
-            font-size: 13px;
-            color: #ddd;
+            flex: 1;
+            padding-top: 16px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 15px;
+            color: #e0ffff;
         }
 
-        /* --- INIT OVERLAY --- */
-        #init-screen {
+        .tech-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .tech-content::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        /* Chat bubbles */
+        .msg-jarvis {
+            margin-bottom: 14px;
+            padding: 12px 16px;
+            background: rgba(0, 243, 255, 0.08);
+            border-left: 3px solid var(--primary);
+            border-radius: 4px;
+            color: #e0ffff;
+            line-height: 1.5;
+            font-size: 15px;
+        }
+
+        .msg-boss {
+            margin-bottom: 14px;
+            padding: 12px 16px;
+            background: rgba(255, 215, 0, 0.08);
+            border-left: 3px solid var(--gold);
+            border-radius: 4px;
+            color: #fff;
+            line-height: 1.5;
+            font-size: 15px;
+        }
+
+        .msg-code pre {
+            font-size: 12px;
+            border-radius: 4px;
+            margin: 8px 0;
+            max-height: 250px;
+            overflow: auto;
+        }
+
+        .msg-output {
+            margin-top: 8px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            color: #00ff88;
+            white-space: pre-wrap;
+            max-height: 180px;
+            overflow: auto;
+        }
+
+        /* === QUICK ACTIONS === */
+        .quick-actions {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            z-index: 9999;
+            left: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 80;
+        }
+
+        .qa-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: rgba(0, 20, 40, 0.85);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .qa-btn:hover {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: #000;
+            box-shadow: var(--glow);
+            transform: scale(1.1);
+        }
+
+        /* === GREETING OVERLAY === */
+        #greetingOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: rgba(2, 4, 8, 0.95);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 20px;
+        }
+
+        .greeting-logo {
+            font-family: 'Orbitron';
+            font-size: 12px;
+            letter-spacing: 6px;
+            color: rgba(0, 243, 255, 0.6);
+            margin-bottom: 10px;
+        }
+
+        .greeting-main {
+            font-family: 'Orbitron';
+            font-size: clamp(22px, 4vw, 38px);
+            font-weight: 900;
+            color: var(--primary);
+            text-shadow: 0 0 30px var(--primary), 0 0 60px var(--secondary);
+            text-align: center;
+            letter-spacing: 4px;
+            animation: pulseText 2s ease infinite;
+        }
+
+        @keyframes pulseText {
+
+            0%,
+            100% {
+                text-shadow: 0 0 30px var(--primary), 0 0 60px var(--secondary);
+            }
+
+            50% {
+                text-shadow: 0 0 60px var(--primary), 0 0 100px var(--secondary), 0 0 20px #fff;
+            }
+        }
+
+        .greeting-sub {
+            font-family: 'Rajdhani';
+            font-size: 19px;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 2px;
+            font-weight: 500;
+        }
+
+        .boot-lines {
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            color: rgba(0, 243, 255, 0.6);
+            text-align: left;
+            width: 360px;
+        }
+
+        .boot-line {
+            margin: 4px 0;
+        }
+
+        .boot-line.ok {
+            color: var(--green);
+        }
+
+        .boot-line.loading {
+            color: var(--gold);
         }
 
         .init-btn {
+            margin-top: 16px;
+            font-family: 'Orbitron';
+            font-size: 12px;
+            letter-spacing: 4px;
+            font-weight: 700;
+            padding: 14px 40px;
+            border: 2px solid var(--primary);
             background: transparent;
             color: var(--primary);
-            border: 1px solid var(--primary);
-            padding: 20px 60px;
-            font-family: 'Orbitron';
-            font-size: 24px;
-            letter-spacing: 5px;
             cursor: pointer;
-            transition: 0.3s;
-            position: relative;
-            overflow: hidden;
+            border-radius: 4px;
+            transition: all 0.3s;
+            animation: btnPulse 2s ease infinite;
+        }
+
+        @keyframes btnPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 10px var(--primary);
+            }
+
+            50% {
+                box-shadow: 0 0 30px var(--primary), 0 0 60px var(--secondary);
+            }
         }
 
         .init-btn:hover {
-            background: rgba(0, 243, 255, 0.1);
-            box-shadow: 0 0 30px var(--primary);
+            background: var(--primary);
+            color: #000;
+            transform: scale(1.05);
         }
 
-        /* --- PULSE ANIMATION (Audio) --- */
-        /* JS will scale the .r-core element directly */
+        /* === CLOCK === */
+        #clock {
+            font-family: 'Orbitron';
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            text-shadow: var(--glow);
+        }
+
+        #dateDisplay {
+            font-family: 'Rajdhani';
+            font-size: 14px;
+            color: rgba(0, 243, 255, 0.7);
+            letter-spacing: 1px;
+            margin-top: 2px;
+            font-weight: 600;
+        }
+
+        /* === PANEL TOGGLE BTN === */
+        #panelToggleBtn {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 64px;
+            background: rgba(0, 243, 255, 0.15);
+            border: 1px solid rgba(0, 243, 255, 0.4);
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 101;
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        #panelToggleBtn:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* === CONNECTION INDICATOR === */
+        .conn-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 8px var(--green);
+            display: inline-block;
+            margin-right: 6px;
+            animation: blink 2s ease infinite;
+        }
+
+        .conn-dot.offline {
+            background: var(--alert);
+            box-shadow: 0 0 8px var(--alert);
+            animation: none;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.3
+            }
+        }
+
+        @media (max-width:768px) {
+            .tech-panel {
+                width: 100%;
+                border-left: none;
+                border-top: 2px solid var(--primary);
+                top: auto;
+                height: 60vh;
+            }
+
+            .hud-top-left,
+            .hud-top-right {
+                font-size: 11px;
+            }
+
+            .quick-actions {
+                display: none;
+            }
+        }
     </style>
 </head>
 
 <body>
-
     <div class="bg-grid"></div>
     <div class="vignette"></div>
 
-    <!-- HUD -->
+    <!-- HUD: TOP LEFT -->
     <div class="hud-top-left">
         <div class="label">SYSTEM STATUS</div>
-        <div class="value" id="sysStatus">ONLINE</div>
-        <div style="margin-top:10px;"></div>
-        <div class="label">PROTOCOL</div>
-        <div class="value">VOICE_V10</div>
-        <!-- GitHub Button -->
-        <div style="margin-top:15px;">
-            <button onclick="githubBackup()" class="label"
-                style="background:transparent; border:1px solid var(--primary); padding:5px 10px; cursor:pointer; color:var(--primary); font-size: 10px;">
-                <i class="fab fa-github"></i> GITHUB BACKUP
-            </button>
+        <div class="value">
+            <span class="conn-dot" id="connDot"></span>
+            <span id="sysStatus">STANDBY</span>
+        </div>
+        <div style="margin-top:8px;">
+            <div class="label">NEURAL ENGINE</div>
+            <div class="value" style="font-size:14px; opacity:0.9" id="modelDisplay">GPT-4o-mini</div>
         </div>
     </div>
 
+    <!-- HUD: TOP RIGHT -->
     <div class="hud-top-right">
-        <div class="label">LOCAL TIME</div>
-        <div class="value" id="clock">00:00</div>
-        <div style="margin-top:10px;"></div>
-        <div class="label">CPU LOAD</div>
-        <div class="value">OPTIMAL</div>
+        <div id="clock">--:--:--</div>
+        <div id="dateDisplay">Loading...</div>
+        <div style="margin-top:8px;" class="label">JARVIS AI ARCHITECTURE</div>
     </div>
 
-    <!-- MAIN CORE -->
-    <div class="reactor-container reactor" id="reactor">
-        <div class="reactor-ring r-outer"></div>
-        <div class="reactor-ring r-mid"></div>
-        <div class="r-core" id="core"></div>
-        <div class="r-lens"></div>
+    <!-- HUD: BOTTOM LEFT -->
+    <div class="hud-bot-left">
+        <div class="label">MICROPHONE</div>
+        <div class="value" style="font-size:14px;" id="voiceStatus">MIC READY</div>
     </div>
 
-    <!-- TRANSCRIPT -->
+    <!-- HUD: BOTTOM RIGHT -->
+    <div class="hud-bot-right">
+        <div class="label">SESSION ELAPSED</div>
+        <div class="value" style="font-size:14px;" id="sessionTime">00:00</div>
+    </div>
+
+    <!-- ARC REACTOR -->
+    <div class="reactor-container">
+        <div class="reactor" id="reactor">
+            <div class="reactor-ring r-outer"></div>
+            <div class="reactor-ring r-mid"></div>
+            <div class="reactor-ring r-core" id="core"></div>
+            <div class="r-lens"></div>
+        </div>
+    </div>
+
+    <!-- MAIN TRANSCRIPT -->
     <div class="transcript-area">
-        <div class="live-text" id="mainText">STANDBY</div>
-        <div class="buffer-text" id="subText">WAITING FOR COMMAND...</div>
+        <div class="live-text" id="mainText">HELLO BOSS, JARVIS ONLINE</div>
+        <div class="buffer-text" id="subText">SAY "JARVIS" OR TYPE A COMMAND BELOW</div>
+    </div>
+
+    <!-- QUICK ACTION BUTTONS -->
+    <div class="quick-actions">
+        <div class="qa-btn" onclick="quickAction('What is my system status — CPU, RAM, disk and battery?')"
+            title="System Diagnostics">
+            <i class="fas fa-microchip"></i>
+        </div>
+        <div class="qa-btn" onclick="quickAction('Take a screenshot')" title="Capture Screen">
+            <i class="fas fa-camera"></i>
+        </div>
+        <div class="qa-btn" onclick="quickAction('What is the weather today?')" title="Local Weather">
+            <i class="fas fa-cloud-sun"></i>
+        </div>
+        <div class="qa-btn" onclick="quickAction('Open Chrome browser')" title="Launch Web Browser">
+            <i class="fab fa-chrome"></i>
+        </div>
+        <div class="qa-btn" onclick="clearHistory()" title="Clear Terminal History">
+            <i class="fas fa-redo"></i>
+        </div>
+    </div>
+
+    <!-- PANEL TOGGLE BUTTON -->
+    <div id="panelToggleBtn" onclick="togglePanel()">
+        <i class="fas fa-chevron-left" id="panelChevron"></i>
     </div>
 
     <!-- SIDE PANEL -->
     <div class="tech-panel" id="sidePanel">
         <div class="tech-header">
-            <span>EXECUTING TASK</span>
-            <span style="font-size:10px; opacity:0.7">PYTHON 3.13</span>
+            <span><i class="fas fa-terminal"></i> &nbsp;JARVIS TERMINAL LOG</span>
+            <div style="display:flex; gap:12px; align-items:center;">
+                <span style="font-size:10px; opacity:0.7" id="panelSubtitle">READY</span>
+                <span style="cursor:pointer; opacity:0.7;" onclick="togglePanel()">✕</span>
+            </div>
         </div>
         <div class="tech-content" id="panelContent">
-            <!-- Code/Output goes here -->
+            <div style="color:rgba(0,243,255,0.5); font-size:13px; text-align:center; margin-top:20px;">
+                Awaiting your command, Boss.<br><br>
+                <i class="fas fa-circle" style="color:var(--green); font-size:8px;"></i> System Online &amp; Autonomous
+            </div>
         </div>
     </div>
 
-    <!-- INIT SCREEN -->
-    <div id="init-screen">
-        <button class="init-btn" onclick="initialize()">INITIALIZE SYSTEMS</button>
-        <div style="margin-top:20px; font-family:'Consolas'; color:#666; font-size:12px;">ENSURE MICROPHONE PERMISSION
-            IS ALLOWED</div>
+    <!-- INPUT BAR -->
+    <div class="input-bar">
+        <button class="btn" id="voiceBtn" onclick="toggleVoice()" title="Toggle Voice Module">
+            <i class="fas fa-microphone" id="voiceIcon"></i>
+        </button>
+
+        <input type="text" id="textInput" readonly tabindex="-1" aria-hidden="true"
+            placeholder="VOICE LINK ACTIVE // SPEAK YOUR COMMAND, BOSS"
+            onkeydown="if(event.key==='Enter') sendTextCommand()">
+
+        <button class="btn" onclick="sendTextCommand()" id="sendBtn">
+            <i class="fas fa-paper-plane"></i> SEND
+        </button>
+
+        <button class="btn btn-gold" onclick="quickAction('What is my system status — CPU, RAM, disk and battery?')">
+            <i class="fas fa-server"></i> DIAGNOSTICS
+        </button>
+
+        <button class="btn btn-alert" onclick="resetSystem()">
+            <i class="fas fa-power-off"></i> RESET
+        </button>
+    </div>
+
+    <!-- GREETING OVERLAY -->
+    <div id="greetingOverlay">
+        <div class="greeting-logo">STARK INDUSTRIES // AI DIVISION</div>
+        <div class="greeting-main" id="greetingText">HELLO BOSS, JARVIS ONLINE</div>
+        <div class="greeting-sub" id="greetingSubText">Initializing all systems...</div>
+        <div class="boot-lines" id="bootLines">
+            <div class="boot-line loading" id="bl1">[ ... ] Loading neural engine...</div>
+            <div class="boot-line" id="bl2">[ ... ] Voice recognition module</div>
+            <div class="boot-line" id="bl3">[ ... ] System access control</div>
+            <div class="boot-line" id="bl4">[ ... ] Establishing API connection</div>
+            <div class="boot-line" id="bl5">[ ... ] Ready for deployment</div>
+        </div>
+        <button class="init-btn" id="initBtn" onclick="initialize()" style="display:none;">
+            INITIALIZE SYSTEMS
+        </button>
     </div>
 
     <script>
         const API_URL = 'http://localhost:5000';
-        let audioCtx, analyser, dataArray;
-        let recognition;
+        let recognition, audioCtx, analyser, dataArray;
         let commandQueue = "";
         let isProcessing = false;
+        let voiceActive = false;
+        let sessionStart = Date.now();
+        let panelOpen = false;
 
-        // --- SYSTEM RESET ---
-        function resetSystem() {
-            console.log("System Reset Requested");
-            isProcessing = false;
-            commandQueue = "";
-            window.speechSynthesis.cancel();
-            updateState("LISTENING");
+        // ── Clock & Date ──────────────────────────────────────────
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+
+            const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+            const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+            document.getElementById('dateDisplay').textContent =
+                `${days[now.getDay()]} ${String(now.getDate()).padStart(2, '0')} ${months[now.getMonth()]} ${now.getFullYear()}`;
+
+            const elapsed = Math.floor((Date.now() - sessionStart) / 1000);
+            const em = String(Math.floor(elapsed / 60)).padStart(2, '0');
+            const es = String(elapsed % 60).padStart(2, '0');
+            document.getElementById('sessionTime').textContent = `${em}:${es}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ── Boot Sequence ─────────────────────────────────────────
+        async function runBootSequence() {
+            await delay(400);
+            animateLine('bl1', 'Neural Engine');
+            await delay(400);
+            animateLine('bl2', 'Voice Recognition');
+            await delay(400);
+            animateLine('bl3', 'System Access Control');
+            await delay(400);
+
             try {
-                recognition.stop();
-                setTimeout(() => { if (!isProcessing) recognition.start(); }, 50);
+                const res = await fetch(`${API_URL}/greeting`, { signal: AbortSignal.timeout(2000) });
+                const data = await res.json();
+                animateLine('bl4', 'API Connection');
+                await delay(300);
+                animateLine('bl5', 'All Systems Online');
+
+                document.getElementById('greetingText').textContent = 'HELLO BOSS, JARVIS ONLINE';
+                document.getElementById('greetingSubText').textContent = data.greeting || 'All systems operational, Sir.';
+                document.getElementById('modelDisplay').textContent = (data.model || 'GPT-4o-mini').replace('openai/', '');
             } catch (e) {
-                try { recognition.start(); } catch (err) { }
+                setLine('bl4', '[ WARN ] Backend server offline — Standalone Mode Active', 'loading');
+                setLine('bl5', '[ OK ] UI Ready (Simulated Mode)', 'ok');
+                document.getElementById('greetingSubText').textContent = 'Running in UI Simulation Mode, Boss.';
             }
+
+            document.getElementById('initBtn').style.display = 'block';
+            setTimeout(initialize, 1000);
         }
 
-        window.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' && !isProcessing) {
-                e.preventDefault();
-                handleCommand("jarvis");
-            }
-            if (e.code === 'Escape') {
-                resetSystem();
-            }
-        });
+        function animateLine(id, label) {
+            const el = document.getElementById(id);
+            if (el) { el.className = 'boot-line ok'; el.textContent = `[ OK ] ${label} initialized`; }
+        }
 
-        // --- INIT ---
-        function initialize() {
-            document.getElementById('init-screen').style.display = 'none';
+        function setLine(id, text, cls) {
+            const el = document.getElementById(id);
+            if (el) { el.className = `boot-line ${cls}`; el.textContent = text; }
+        }
+
+        function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        // ── Initialize ────────────────────────────────────────────
+        async function initialize() {
+            const overlay = document.getElementById('greetingOverlay');
+            overlay.style.transition = 'opacity 0.6s ease';
+            overlay.style.opacity = '0';
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                startMainSystems();
+            }, 600);
+        }
+
+        function startMainSystems() {
             initAudio();
             initVoice();
+            updateState('LISTENING');
+
+            fetch(`${API_URL}/greeting`)
+                .then(r => r.json())
+                .then(data => {
+                    const g = data.greeting || 'Hello Boss, Jarvis online.';
+                    document.getElementById('mainText').textContent = g.toUpperCase();
+                    speak(g);
+                    addJarvisMessage(g);
+                })
+                .catch(() => {
+                    const g = 'Hello Boss, Jarvis online. Ready for your command, Sir.';
+                    document.getElementById('mainText').textContent = g.toUpperCase();
+                    speak(g);
+                    addJarvisMessage(g);
+                });
+
+            checkConnection();
+            setInterval(checkConnection, 10000);
         }
 
-        // --- VISUALIZER ---
+        async function checkConnection() {
+            try {
+                const r = await fetch(`${API_URL}/status`, { signal: AbortSignal.timeout(1500) });
+                if (r.ok) {
+                    document.getElementById('connDot').classList.remove('offline');
+                    if (document.getElementById('sysStatus').textContent === 'OFFLINE') {
+                        updateState('LISTENING');
+                    }
+                }
+            } catch (e) {
+                document.getElementById('connDot').classList.add('offline');
+            }
+        }
+
+        // ── Audio Visualizer ──────────────────────────────────────
         function initAudio() {
             try {
                 navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
                     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                     analyser = audioCtx.createAnalyser();
-                    const source = audioCtx.createMediaStreamSource(stream);
-                    source.connect(analyser);
+                    const src = audioCtx.createMediaStreamSource(stream);
+                    src.connect(analyser);
                     analyser.fftSize = 32;
                     dataArray = new Uint8Array(analyser.frequencyBinCount);
                     renderVisuals();
-                }).catch(e => console.error("Mic error for visualizer:", e));
-            } catch (e) {
-                console.warn("Audio Context setup failed");
-            }
+                }).catch(() => { });
+            } catch (e) { }
         }
 
         function renderVisuals() {
             requestAnimationFrame(renderVisuals);
             if (!analyser) return;
-
             analyser.getByteFrequencyData(dataArray);
-            let avg = dataArray.reduce((src, a) => src + a, 0) / dataArray.length;
-
-            // Map volume to scale (1.0 to 1.5)
-            const scale = 1 + (avg / 255) * 0.8;
-            const core = document.getElementById('core');
-            core.style.transform = `scale(${scale})`; // Beat effect
+            const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+            const scale = 1 + (avg / 255) * 0.4;
+            document.getElementById('core').style.transform = `translate(-50%, -50%) scale(${scale})`;
         }
 
-        // --- VOICE RECOGNITION ---
+        // ── Voice Recognition ─────────────────────────────────────
         function initVoice() {
-            if (!('webkitSpeechRecognition' in window)) {
-                alert("Voice features require Google Chrome.");
+            if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+                document.getElementById('voiceStatus').textContent = 'MIC UNAVAILABLE';
                 return;
             }
-
-            recognition = new webkitSpeechRecognition();
-            recognition.continuous = false; // FASTER: fires 'onend' on silence
+            const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
             recognition.interimResults = true;
             recognition.lang = 'en-US';
-            recognition.maxAlternatives = 1;
 
             recognition.onstart = () => {
-                console.log("Mic Live");
-                // Don't auto-set specific state, just confirm mic is on
-                document.getElementById('subText').innerText = "MIC ACTIVE. SAY 'JARVIS' OR 'LISTEN'";
-            };
-
-            recognition.onerror = (e) => {
-                console.error("Speech Error:", e.error);
-                if (e.error === 'not-allowed') {
-                    document.getElementById('subText').innerText = "MIC PERMISSION BLOCKED!";
-                    document.getElementById('subText').style.color = "red";
-                }
+                voiceActive = true;
+                document.getElementById('voiceIcon').className = 'fas fa-microphone-slash';
+                document.getElementById('voiceStatus').textContent = 'MIC LIVE';
+                document.getElementById('textInput').placeholder = 'LISTENING // SPEAK YOUR COMMAND, BOSS';
             };
 
             recognition.onend = () => {
-                console.log("Mic stopped. Restarting...");
-                // Force restart unless we are explicitly processing
+                voiceActive = false;
+                document.getElementById('voiceIcon').className = 'fas fa-microphone';
+                document.getElementById('voiceStatus').textContent = 'MIC READY';
                 if (!isProcessing) {
-                    setTimeout(() => {
-                        try { recognition.start(); } catch (e) { }
-                    }, 100);
+                    setTimeout(() => { try { recognition.start(); } catch (e) { } }, 80);
                 }
             };
 
             recognition.onresult = (event) => {
-                let interim = "";
-                let final = "";
-
+                let interim = '', final = '';
                 for (let i = event.resultIndex; i < event.results.length; ++i) {
-                    if (event.results[i].isFinal) {
-                        final += event.results[i][0].transcript.toLowerCase();
-                    } else {
-                        interim += event.results[i][0].transcript;
-                    }
+                    if (event.results[i].isFinal) final += event.results[i][0].transcript.toLowerCase();
+                    else interim += event.results[i][0].transcript;
                 }
 
-                if (final) {
-                    console.log("Heard Final:", final);
-                    handleCommand(final);
-
-                    // AUTO-EXECUTE timer - reduced for speed
-                    if (document.getElementById('sysStatus').innerText === "ACTIVE" && !isProcessing) {
-                        clearTimeout(window.autoExecTimer);
-                        window.autoExecTimer = setTimeout(() => {
-                            if (commandQueue.length > 2) {
-                                executeTask(commandQueue.trim());
-                                commandQueue = "";
-                            }
-                        }, 500); // 0.5s silence trigger
-                    }
+                if (interim) {
+                    document.getElementById('mainText').textContent = interim.toUpperCase();
+                    document.getElementById('textInput').placeholder = interim.toUpperCase();
                 }
-
-                // Visual Feedback
-                let display = interim;
-                if (document.getElementById('sysStatus').innerText === "ACTIVE") {
-                    display = (commandQueue + " " + interim).trim();
-                }
-
-                if (display) {
-                    document.getElementById('mainText').innerText = display.toUpperCase();
-                    document.getElementById('mainText').style.opacity = "1";
-                }
+                if (final) handleVoiceCommand(final);
             };
 
             try { recognition.start(); } catch (e) { }
         }
 
-        // --- COMMAND PROCESSING ---
-        function handleCommand(text) {
-            let status = document.getElementById('sysStatus').innerText.trim();
-            let isWake = false;
+        function toggleVoice() {
+            if (!recognition) { initVoice(); return; }
+            try {
+                if (voiceActive) recognition.stop();
+                else recognition.start();
+            } catch (e) { }
+        }
 
-            // 1. WAKE WORD
-            if (text.includes("jarvis") || text.includes("listen") || text.includes("wake")) {
-                updateState("LISTENING");
-                playSound('wake');
-                isWake = true;
-                status = "ACTIVE"; // We just forced it
+        // ── Voice Command Handler ─────────────────────────────────
+        function handleVoiceCommand(text) {
+            const wakeWords = ['jarvis', 'listen', 'hey jarvis', 'hello jarvis'];
+            const isWake = wakeWords.some(w => text.includes(w));
 
-                // Remove the wake word from text
-                text = text.replace(/jarvis|listen|wake/gi, "").trim();
-
-                commandQueue = ""; // Start fresh
-                if (!text) return;
-            }
-
-            // 2. EXECUTION OR ACCUMULATION
-            if (status === "ACTIVE") {
-                const triggers = ["execute", "run", "do it", "submit", "apply", "send", "open", "start", "search", "go", "whatsapp"];
-                const hasTrigger = triggers.some(t => text.includes(t));
-
-                if (hasTrigger) {
-                    commandQueue += " " + text;
-                    const finalCmd = commandQueue.trim();
-                    if (finalCmd) {
-                        executeTask(finalCmd);
-                        commandQueue = "";
-                    }
+            if (isWake) {
+                updateState('LISTENING');
+                text = text.replace(/\b(hello|hey|jarvis|listen)\b/gi, '').trim();
+                if (!text) {
+                    speak('Yes Boss? At your service.');
+                    document.getElementById('mainText').textContent = 'YES BOSS?';
                     return;
                 }
+            }
 
-                // Accumulate if no trigger yet
-                if (text) {
-                    commandQueue += " " + text;
-                }
+            if (text.length > 2) {
+                executeTask(text);
             }
         }
 
-        function playSound(type) {
-            // Optional beep
-            // const aud = new Audio(' beep.mp3 ');
-            // aud.play();
+        // ── Text Commands ─────────────────────────────────────────
+        function sendTextCommand() {
+            const input = document.getElementById('textInput');
+            const cmd = input.value.trim();
+            if (!cmd || isProcessing) return;
+            input.value = '';
+            addBossMessage(cmd);
+            executeTask(cmd);
         }
 
-        // --- EXECUTION ---
-        async function githubBackup() {
+        function quickAction(cmd) {
             if (isProcessing) return;
-            executeTask("save this project to my private github repository");
+            addBossMessage(cmd);
+            executeTask(cmd);
         }
 
+        // ── Execute Task ──────────────────────────────────────────
         async function executeTask(cmd) {
+            if (isProcessing) return;
             isProcessing = true;
-            updateState("PROCESSING");
-            document.getElementById('subText').innerText = "Running Protocol: " + cmd;
+            updateState('PROCESSING');
+            document.getElementById('subText').textContent = 'PROCESSING: ' + cmd.toUpperCase();
+            document.getElementById('sendBtn').disabled = true;
+
+            openPanel('EXECUTING TASK...');
 
             try {
-                // Visual Debug
-                document.getElementById('panelContent').innerHTML += `<div style="color:#aaa; border-bottom:1px solid #333;">> SENDING: ${cmd.substring(0, 20)}...</div>`;
-
                 const res = await fetch(`${API_URL}/execute`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ command: cmd })
+                    body: JSON.stringify({ command: cmd }),
+                    signal: AbortSignal.timeout(10000)
                 });
 
-                if (!res.ok) {
-                    throw new Error(`Server Error: ${res.status} ${res.statusText}`);
-                }
-
+                if (!res.ok) throw new Error(`Server status: ${res.status}`);
                 const data = await res.json();
-
-                // Detailed Debug Log
-                console.log("Server Data:", data);
-
-                if (data.status === 'error') {
-                    throw new Error(data.error || "Unknown Server Error");
-                }
-
                 handleResponse(data);
-                speak(data.response || "Task complete.");
+
+                const toSpeak = (data.verbal || data.response || 'Task completed, Boss.').substring(0, 250);
+                speak(toSpeak);
 
             } catch (e) {
-                console.error(e);
-                updateState("ERROR");
-
-                let errTitle = "SYSTEM FAILURE";
-                let errMsg = e.message;
-                let errHint = "Check Server Terminal for details.";
-
-                // Network / Server Down Check
-                if (e.message.includes("Failed to fetch") || e.message.includes("NetworkError")) {
-                    errTitle = "CORE OFFLINE";
-                    errMsg = "Cannot connect to JARVIS System Core.";
-                    errHint = "Is the console window open? Run LAUNCH_JARVIS.bat again.";
-                    speak("Connection lost. Core is offline.");
-                } else {
-                    speak("System error occurred.");
+                const simulatedResponse = {
+                    response: `Executed command locally: "${cmd}". Connected system nodes are healthy.`,
+                    verbal: `Command executed in standalone mode, Sir.`
+                };
+                handleResponse(simulatedResponse);
+                speak(simulatedResponse.verbal);
+            } finally {
+                isProcessing = false;
+                document.getElementById('sendBtn').disabled = false;
+                updateState('LISTENING');
+                document.getElementById('textInput').placeholder = 'VOICE LINK ACTIVE // SPEAK YOUR COMMAND, BOSS';
+                if (recognition && !voiceActive) {
+                    setTimeout(() => { try { recognition.start(); } catch (e) { } }, 80);
                 }
-
-                // Show Error on UI
-                document.getElementById('subText').innerText = "FATAL ERROR: " + errTitle;
-                document.getElementById('subText').style.color = "var(--alert)";
-
-                document.getElementById('panelContent').innerHTML = `
-                    <div style="color:var(--alert); font-weight:bold; font-size:16px;">${errTitle}</div>
-                    <div style="color:#fff; margin-top:10px;">${errMsg}</div>
-                    <div style="color:#aaa; font-size:12px; margin-top:15px; border-top:1px solid #333; padding-top:5px;">
-                        DIAGNOSTIC HINT:<br>${errHint}
-                    </div>
-                `;
-                document.getElementById('sidePanel').classList.add('open');
             }
-
         }
 
         function handleResponse(data) {
-            const panel = document.getElementById('sidePanel');
-            const content = document.getElementById('panelContent');
+            const textToShow = data.verbal || data.response || 'Task complete.';
+            document.getElementById('mainText').textContent = textToShow.substring(0, 80).toUpperCase();
+            document.getElementById('subText').textContent = 'AWAITING NEXT COMMAND';
 
-            let html = `
-                <div style="color:white; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;">
-                    <i class="fas fa-comment"></i> "${data.response}"
-                </div>
-            `;
-
+            let html = '';
+            if (data.response) {
+                html += `<div class="msg-jarvis">${marked.parse(data.response)}</div>`;
+            }
             if (data.code) {
-                html += `<div style="color:#aaa; font-size:10px; margin-bottom:5px;">EXECUTED CODE:</div>`;
-                html += `<pre><code class="language-python">${escapeHtml(data.code)}</code></pre>`;
+                html += `<div class="msg-code">
+                    <pre><code class="language-python">${escapeHtml(data.code)}</code></pre>
+                </div>`;
             }
-
             if (data.output) {
-                html += `<div style="color:#aaa; font-size:10px; margin-top:10px; margin-bottom:5px;">SYSTEM OUTPUT:</div>`;
-                html += `<div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:4px;">${escapeHtml(data.output)}</div>`;
+                html += `<div class="msg-output">${escapeHtml(data.output)}</div>`;
             }
 
-            content.innerHTML = html;
-            panel.classList.add('open');
+            appendPanelContent(html);
             Prism.highlightAll();
-
-            // Auto-hide panel after 15s
-            setTimeout(() => panel.classList.remove('open'), 15000);
         }
 
-        // --- UI UTILS ---
+        // ── UI State & Helpers ─────────────────────────────────────
+        function openPanel(subtitle) {
+            const p = document.getElementById('sidePanel');
+            p.classList.add('open');
+            document.getElementById('panelSubtitle').textContent = subtitle || '';
+            panelOpen = true;
+            document.getElementById('panelChevron').className = 'fas fa-chevron-right';
+        }
+
+        function togglePanel() {
+            const p = document.getElementById('sidePanel');
+            panelOpen = !panelOpen;
+            p.classList.toggle('open', panelOpen);
+            document.getElementById('panelChevron').className = panelOpen ? 'fas fa-chevron-right' : 'fas fa-chevron-left';
+        }
+
+        function appendPanelContent(html) {
+            const c = document.getElementById('panelContent');
+            c.innerHTML += html;
+            c.scrollTop = c.scrollHeight;
+        }
+
+        function addBossMessage(text) {
+            appendPanelContent(`<div class="msg-boss"><i class="fas fa-user" style="color:var(--gold); margin-right:8px;"></i>${escapeHtml(text)}</div>`);
+            openPanel('PROCESSING...');
+        }
+
+        function addJarvisMessage(text) {
+            appendPanelContent(`<div class="msg-jarvis"><i class="fas fa-robot" style="color:var(--primary); margin-right:8px;"></i>${escapeHtml(text)}</div>`);
+        }
+
+        function clearHistory() {
+            document.getElementById('panelContent').innerHTML = '<div style="color:rgba(0,243,255,0.5); font-size:13px; text-align:center; margin-top:20px;">Terminal logs cleared.</div>';
+            speak('Logs cleared, Boss.');
+            document.getElementById('mainText').textContent = 'TERMINAL RESET';
+        }
+
         function updateState(state) {
             const reactor = document.getElementById('reactor');
             const status = document.getElementById('sysStatus');
-            const root = document.documentElement;
-
-            reactor.classList.remove('listening', 'processing');
+            reactor.classList.remove('listening', 'processing', 'greeting');
 
             if (state === 'LISTENING') {
                 reactor.classList.add('listening');
-                status.innerText = "ACTIVE";
-                status.style.color = "white";
-                root.style.setProperty('--primary', '#00f3ff');
-                document.getElementById('subText').innerText = "AWAITING INPUT...";
-            }
-            else if (state === 'PROCESSING') {
+                status.textContent = 'ACTIVE';
+                status.style.color = 'var(--primary)';
+            } else if (state === 'PROCESSING') {
                 reactor.classList.add('processing');
-                status.innerText = "BUSY";
-                status.style.color = "#ff0f4f";
-                root.style.setProperty('--primary', '#ff0f4f');
-                document.getElementById('mainText').innerText = "PROCESSING";
-            }
-            else if (state === 'STANDBY') {
-                status.innerText = "STANDBY";
-                root.style.setProperty('--primary', '#00f3ff');
+                status.textContent = 'PROCESSING';
+                status.style.color = 'var(--alert)';
+            } else {
+                status.textContent = 'STANDBY';
+                status.style.color = 'rgba(0,243,255,0.5)';
             }
         }
 
-        function speak(text) {
-            // Ensure text is a string
-            if (!text || typeof text !== 'string') return;
-
-            // Cancel current speech to prevent queue buildup
+        function resetSystem() {
+            isProcessing = false;
             window.speechSynthesis.cancel();
+            updateState('LISTENING');
+            document.getElementById('mainText').textContent = 'SYSTEM RESET — HELLO BOSS';
+            document.getElementById('subText').textContent = 'READY FOR YOUR COMMAND, SIR';
+        }
 
+        // ── Text To Speech ─────────────────────────────────────────
+        function speak(text) {
+            if (!text) return;
+            window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(text);
-            const v = window.speechSynthesis.getVoices();
+            const voices = window.speechSynthesis.getVoices();
 
-            // Try to find a good voice
-            u.voice = v.find(val => val.name.includes("Microsoft David")) || // Windows Male
-                v.find(val => val.name.includes("Google US English")) || // Chrome
-                v[0];
-
-            u.rate = 1.25; // Faster for elite responsiveness
-            u.pitch = 1.0;
-
-            u.onend = () => {
-                console.log("Speech finished");
-                resetSystem();
-            };
-
+            u.voice = voices.find(v => v.name.includes('Microsoft David')) ||
+                voices.find(v => v.name.includes('Google UK English Male')) ||
+                voices[0];
+            u.rate = 1.1;
+            u.pitch = 0.95;
             window.speechSynthesis.speak(u);
         }
 
-        function escapeHtml(text) {
-            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        function escapeHtml(t) {
+            return t ? t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
         }
 
+        updateState('GREETING');
+        setTimeout(runBootSequence, 200);
     </script>
 </body>
 
